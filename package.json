@@ -1,0 +1,14 @@
+{
+  "name": "js-rest-api-simple",
+  "version": "1.0.0",
+  "description": "making a simple REST API to learn about the process",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jake Knox",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
