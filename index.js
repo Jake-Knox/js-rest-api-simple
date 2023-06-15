@@ -1,12 +1,26 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-
 app.use(express.json());
 
-// basic data storage
+// example commands
+// http://localhost:3000/api/hello (browser)
+
+// curl -X POST http://localhost:3000/api/books/Emma/Jane%20Austen
+// curl -X POST http://localhost:3000/api/books/El%20Aleph/Borjes
+
+// curl -X PUT -H "Content-Type: application/json" -d "{\"title\":\"Persuasion\",\"author\":\"Austen\"}" http://localhost:3000/api/books/1
+// curl -X PUT -H "Content-Type: application/json" -d "{\"title\":\"Pride And Prejudice\"}" http://localhost:3000/api/books/1
+
+
+// simple id 
+let counter = 1;
+
+// simple data storage
+// starting server with 1 entry
 let books = [
     {
+      id: 0,
       title: "Ficciones",
       author: "Jorge Luis Borges"
     }
@@ -22,38 +36,38 @@ app.post('/api/books/:title/:author', (req, res) => {
     console.log("add book");
     const title = req.params.title; 
     const author = req.params.author; 
-    const newBook = {};
+    const newBook = { title, author };
 
-    newBook.title = title;
-    newBook.author = author;
+    newBook.id = generateUniqueId();
+
     books.push(newBook);
 
     res.send('Book created successfully!');
-
-    // logBooks();
+    logBooks();
 });
 
 // put - update existing book
 app.put('/api/books/:id', (req, res) => {
     console.log("edit book");
+    
+    const bookID = parseInt(req.params.id);   
+    const { title, author } = req.body;
 
-    const bookID = req.params.id;
-    const updatedBook = req.body;
+    console.log(`book id: ${bookID}`)
+    console.log(`new book :${title}, ${author}`)
 
     // find book from the array
-    const bookToUpdate = books.find((book) => book.id === bookID);
-    if(bookToUpdate)
-    {
+    const bookToUpdate = books.find((book) => bookID === books.indexOf(book));
+    if (bookToUpdate) {
         // update book
-        bookToUpdate.title = updatedBook.title || bookToUpdate.title;
-        bookToUpdate.author = updatedBook.author || bookToUpdate.author;
+        bookToUpdate.title = title || bookToUpdate.title;
+        bookToUpdate.author = author || bookToUpdate.author;
 
-        res.send('Book updated successfully!');
-        console.log(books);
+        res.send('Book updated successfully!');       
     } else {
         res.status(404).send('Book not found!');
     }
-    // logBooks();
+    logBooks();
 });
 
 // server start
@@ -63,6 +77,10 @@ app.listen(port, () => {
 
 const logBooks = () => {
     for(let i = 0; i<books.length; i++){
-        console.log(books[i]);
+        console.log(`${books[i].id} ${books[i].title}, ${books[i].author}`);
     }
+}
+
+function generateUniqueId() {
+  return counter++;
 }
