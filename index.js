@@ -24,7 +24,17 @@ let books = [
       title: "Ficciones",
       author: "Jorge Luis Borges"
     }
-  ];
+];
+
+const logBooks = () => {
+    for(let i = 0; i<books.length; i++){
+        console.log(`${books[i].id} ${books[i].title}, ${books[i].author}`);
+    }
+}
+const generateUniqueId = () => {
+  return counter++;
+}
+
 
 // basic hello world
 app.get('/api/hello', (req, res) => {
@@ -70,17 +80,31 @@ app.put('/api/books/:id', (req, res) => {
     logBooks();
 });
 
+// delete - remove a book
+app.delete('/api/books/:id', (req, res) => {
+    console.log("delete book");
+  
+    const bookID = req.params.id;
+  
+    // Find the index of the book with the given ID in the array
+    const bookIndex = books.findIndex((book) => book.id === bookID);
+  
+    if (bookIndex !== -1) {
+      // Remove the book from the array
+      books.splice(bookIndex, 1);
+  
+      res.send('Book deleted successfully!');
+      console.log(books);
+    } else {
+      res.status(404).send('Book not found!');
+    }
+  
+    logBooks();
+  });
+
+
 // server start
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
 
-const logBooks = () => {
-    for(let i = 0; i<books.length; i++){
-        console.log(`${books[i].id} ${books[i].title}, ${books[i].author}`);
-    }
-}
-
-function generateUniqueId() {
-  return counter++;
-}
